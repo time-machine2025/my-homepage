@@ -389,12 +389,12 @@ a:hover {
 }
 
 .stats-ul li {
-  display: grid;
-  grid-template-columns: 10px minmax(0, 1fr) auto;
-  gap: 0.6rem;
+  position: relative;
+  display: flex;
   align-items: center;
-  padding: 0.35rem 0;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.4rem 0;
 }
 
 .stats-ul li:last-child {
@@ -402,14 +402,17 @@ a:hover {
 }
 
 .dot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 999px;
-  background: #ef4444;
-  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+  background: radial-gradient(circle at 30% 30%, #fee2e2, #f97373);
+  box-shadow: 0 0 0 6px rgba(248, 113, 113, 0.16);
 }
 
 .stats-item-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -418,6 +421,11 @@ a:hover {
 .stats-item-val {
   color: #cbd5f5;
   font-variant-numeric: tabular-nums;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  font-size: 0.86rem;
 }
 
 .stats-empty {

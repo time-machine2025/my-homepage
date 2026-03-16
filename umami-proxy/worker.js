@@ -8,11 +8,13 @@
  * Setup (high level):
  * - Create a Worker
  * - Add Secrets:
- *   - UMAMI_TOKEN: your Umami API token
+ *   - UMAMI_API_KEY: your Umami Cloud API key (recommended for cloud.umami.is)
+ *   - UMAMI_TOKEN: (optional) bearer token for self-hosted Umami
  * - Add Variables:
  *   - UMAMI_BASE_URL: https://cloud.umami.is
  *   - UMAMI_WEBSITE_ID: your website UUID
  *   - ALLOW_ORIGIN: https://time-machine2025.github.io (optional; default "*")
+ *   - CACHE_TTL_SECONDS: 300 (optional)
  */
 
 export default {
@@ -53,43 +55,52 @@ export default {
     }
 
     try {
-      const base = (env.UMAMI_BASE_URL || "https://cloud.umami.is").replace(/\/+$/, "");
+      // Umami Cloud API base is https://api.umami.is/v1 (docs).
+      // Self-hosted base is typically https://your-umami-domain (and endpoints under /api).
+      const rawBase = (env.UMAMI_BASE_URL || "https://cloud.umami.is").replace(/\/+$/, "");
       const websiteId = env.UMAMI_WEBSITE_ID;
+      const apiKey = env.UMAMI_API_KEY;
       const token = env.UMAMI_TOKEN;
 
-      if (!websiteId || !token) {
+      if (!websiteId || (!apiKey && !token)) {
         return withCors(
-          json({ ok: false, error: "Missing UMAMI_WEBSITE_ID or UMAMI_TOKEN" }, 500),
+          json(
+            {
+              ok: false,
+              error: "Missing UMAMI_WEBSITE_ID and (UMAMI_API_KEY or UMAMI_TOKEN)",
+            },
+            500
+          ),
           env,
           request.headers.get("Origin")
         );
       }
+
+      const base = apiKey ? "https://api.umami.is/v1" : rawBase;
+      const apiPrefix = apiKey ? "" : "/api";
 
       const now = Date.now();
       const startAt7d = now - 7 * 24 * 60 * 60 * 1000;
       const startAtAll = 0;
       const endAt = now;
 
-      const [pageviewsAll, visitorsAll, pageviews7d, visitors7d, countries7d, referrers7d] =
-        await Promise.all([
-          umamiMetric(base, token, websiteId, startAtAll, endAt, "pageviews"),
-          umamiMetric(base, token, websiteId, startAtAll, endAt, "visitors"),
-          umamiMetric(base, token, websiteId, startAt7d, endAt, "pageviews"),
-          umamiMetric(base, token, websiteId, startAt7d, endAt, "visitors"),
-          umamiByDimension(base, token, websiteId, startAt7d, endAt, "country", 8),
-          umamiByDimension(base, token, websiteId, startAt7d, endAt, "referrer", 8),
+      const [statsAll, stats7d, countries7d, referrers7d] = await Promise.all([
+        umamiStats(base, apiPrefix, { apiKey, token }, websiteId, startAtAll, endAt),
+        umamiStats(base, apiPrefix, { apiKey, token }, websiteId, startAt7d, endAt),
+        umamiMetrics(base, apiPrefix, { apiKey, token }, websiteId, startAt7d, endAt, "country", 8),
+        umamiMetrics(base, apiPrefix, { apiKey, token }, websiteId, startAt7d, endAt, "referrer", 8),
       ]);
 
       const payload = {
         totals: {
-          pageviews: pageviewsAll?.value ?? 0,
-          visitors: visitorsAll?.value ?? 0,
+          pageviews: statsAll?.pageviews ?? 0,
+          visitors: statsAll?.visitors ?? 0,
         },
         last7d: {
-          pageviews: pageviews7d?.value ?? 0,
-          visitors: visitors7d?.value ?? 0,
-          topCountries: (countries7d?.data || []).map((x) => ({ name: x.x, value: x.y })),
-          topReferrers: (referrers7d?.data || []).map((x) => ({ name: x.x, value: x.y })),
+          pageviews: stats7d?.pageviews ?? 0,
+          visitors: stats7d?.visitors ?? 0,
+          topCountries: (countries7d || []).map((x) => ({ name: x.x, value: x.y })),
+          topReferrers: (referrers7d || []).map((x) => ({ name: x.x, value: x.y })),
         },
       };
 
@@ -130,24 +141,23 @@ function withCors(response, env, origin) {
   return new Response(response.body, { status: response.status, headers });
 }
 
-async function umamiMetric(base, token, websiteId, startAt, endAt, type) {
-  const u = new URL(`${base}/api/websites/${websiteId}/metrics`);
+async function umamiStats(base, apiPrefix, auth, websiteId, startAt, endAt) {
+  const u = new URL(`${base}${apiPrefix}/websites/${websiteId}/stats`);
   u.searchParams.set("startAt", String(startAt));
   u.searchParams.set("endAt", String(endAt));
-  u.searchParams.set("type", type);
 
   const res = await fetch(u.toString(), {
     headers: {
       accept: "application/json",
-      authorization: `Bearer ${token}`,
+      ...umamiAuthHeaders(auth),
     },
   });
-  if (!res.ok) throw new Error(`Umami metrics failed: ${res.status}`);
+  if (!res.ok) throw new Error(`Umami stats failed: ${res.status}`);
   return await res.json();
 }
 
-async function umamiByDimension(base, token, websiteId, startAt, endAt, type, limit) {
-  const u = new URL(`${base}/api/websites/${websiteId}/stats`);
+async function umamiMetrics(base, apiPrefix, auth, websiteId, startAt, endAt, type, limit) {
+  const u = new URL(`${base}${apiPrefix}/websites/${websiteId}/metrics`);
   u.searchParams.set("startAt", String(startAt));
   u.searchParams.set("endAt", String(endAt));
   u.searchParams.set("type", type);
@@ -156,10 +166,25 @@ async function umamiByDimension(base, token, websiteId, startAt, endAt, type, li
   const res = await fetch(u.toString(), {
     headers: {
       accept: "application/json",
-      authorization: `Bearer ${token}`,
+      ...umamiAuthHeaders(auth),
     },
   });
-  if (!res.ok) throw new Error(`Umami stats failed: ${res.status}`);
+  if (!res.ok) throw new Error(`Umami metrics failed: ${res.status}`);
   return await res.json();
+}
+
+function umamiAuthHeaders(auth) {
+  // Umami Cloud uses API keys, not bearer tokens.
+  // Self-hosted Umami commonly uses Authorization: Bearer <token>.
+  if (auth && typeof auth === "object" && auth.apiKey) {
+    return { "x-umami-api-key": auth.apiKey };
+  }
+  if (auth && typeof auth === "object" && auth.token) {
+    return { authorization: `Bearer ${auth.token}` };
+  }
+  if (typeof auth === "string" && auth.trim()) {
+    return { authorization: `Bearer ${auth}` };
+  }
+  return {};
 }
 
