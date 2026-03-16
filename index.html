@@ -5,6 +5,7 @@
   <title>我的个人主页</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="styles.css" />
+  <script defer src="https://cloud.umami.is/script.js" data-website-id="895eb124-fd39-4871-87b5-2815db53ff00"></script>
 </head>
 <body>
   <header class="site-header">
@@ -17,6 +18,7 @@
         <a href="#about">关于我</a>
         <a href="#skills">技能</a>
         <a href="#projects">项目</a>
+        <a href="blog.html">博客</a>
         <a href="#contact">联系我</a>
       </nav>
       <button class="nav-toggle" id="navToggle">☰</button>
@@ -117,6 +119,31 @@
               <span>技术栈：按实际填写</span>
             </div>
           </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 访问统计 -->
+    <section class="section" id="stats">
+      <div class="container">
+        <h2 class="section-title">访问信息</h2>
+        <p>这里会展示这个页面的访问数量和大致来源。</p>
+        <div id="visit-stats">
+          <!-- TODO: 在这里接入 Umami / Cloudflare 等统计脚本，显示访问次数 -->
+        </div>
+        <div id="visit-map">
+          <!-- TODO: 在这里嵌入统计服务提供的世界地图组件 -->
+        </div>
+      </div>
+    </section>
+
+    <!-- 评论区 -->
+    <section class="section section-alt" id="comments">
+      <div class="container">
+        <h2 class="section-title">留言 / 评论</h2>
+        <p>欢迎在这里随便聊聊，交流想法。</p>
+        <div id="comments-root">
+          <!-- TODO: 在这里接入 giscus / utterances / Disqus 等评论系统 -->
         </div>
       </div>
     </section>
