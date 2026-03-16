@@ -118,3 +118,55 @@ git push
 - 接入访问统计（Umami / Cloudflare Web Analytics），在 `访问信息` 区块显示访问量和世界地图。
 
 如果你想要把“新增一篇博客”的流程做成更自动的模板（例如只填标题、日期、内容就自动生成结构），可以告诉我你偏好的格式，我可以帮你设计一个简单的“写博客步骤模板”。
+
+---
+
+## 六、访问统计（方案 B：网页内显示数据）
+
+> 说明：Umami 的 `<script>` 负责“上报访问”，但不会自动在网页里显示数字。
+> 如果你想在网页里直接展示访问量/来源，需要一个“代理接口”去调用 Umami API（把 Token 藏在服务端）。
+
+### 1. 部署 Cloudflare Worker 代理（推荐）
+
+本项目已提供 Worker 代码：`umami-proxy/worker.js`。
+
+你需要在 Cloudflare 上：
+
+1. 创建一个 Worker（例如叫 `umami-proxy`）。
+2. 把 `umami-proxy/worker.js` 的内容粘进去并保存部署。
+3. 在 Worker Settings 里添加：
+   - Secrets（机密）：
+     - `UMAMI_TOKEN`：你的 Umami API Token（在 Umami 后台生成）
+   - Variables（普通变量）：
+     - `UMAMI_BASE_URL`：`https://cloud.umami.is`
+     - `UMAMI_WEBSITE_ID`：你 Umami 网站的 `website-id`（UUID）
+     - `ALLOW_ORIGIN`：`https://time-machine2025.github.io`（可选，限制跨域来源；也可先用 `*`）
+
+部署后你会得到一个地址，例如：
+
+- `https://umami-proxy.time-machine2025.workers.dev`
+
+### 2. 配置前端调用地址
+
+在 `index.html` 和 `blog.html` 的 `<head>` 里，找到：
+
+```html
+window.UMAMI_PROXY_URL = "";
+```
+
+把它改成你的 Worker 地址，例如：
+
+```html
+window.UMAMI_PROXY_URL = "https://umami-proxy.time-machine2025.workers.dev";
+```
+
+### 3. 页面会显示什么
+
+当代理可用后，`index.html` 的 `访问信息` 区块会自动显示：
+
+- 最近 7 天浏览量（Pageviews）
+- 最近 7 天访客数（Visitors）
+- Top Countries（带红点）
+- Top Referrers（带红点）
+
+如果显示 “统计不可用：尚未配置 UMAMI_PROXY_URL”，说明你还没填 Worker 地址。

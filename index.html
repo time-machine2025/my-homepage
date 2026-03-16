@@ -6,6 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="styles.css" />
   <script defer src="https://cloud.umami.is/script.js" data-website-id="895eb124-fd39-4871-87b5-2815db53ff00"></script>
+  <script>
+    // 方案 B：把这里改成你自己的代理接口地址（Cloudflare Worker / 其他后端）。
+    // 示例：https://umami-proxy.yourname.workers.dev
+    window.UMAMI_PROXY_URL = "";
+  </script>
 </head>
 <body>
   <header class="site-header">
@@ -127,12 +132,14 @@
     <section class="section" id="stats">
       <div class="container">
         <h2 class="section-title">访问信息</h2>
-        <p>这里会展示这个页面的访问数量和大致来源。</p>
+        <p>这里展示总访问量与访客数（让你一眼看出这个主页是有人在看的）。</p>
         <div id="visit-stats">
-          <!-- TODO: 在这里接入 Umami / Cloudflare 等统计脚本，显示访问次数 -->
+          <div class="stats-loading">统计加载中…</div>
         </div>
         <div id="visit-map">
-          <!-- TODO: 在这里嵌入统计服务提供的世界地图组件 -->
+          <div class="stats-hint">
+            想要更详细的地图和维度（设备/浏览器等），建议直接看 Umami 后台。
+          </div>
         </div>
       </div>
     </section>
