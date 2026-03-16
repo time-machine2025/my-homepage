@@ -189,6 +189,18 @@ a:hover {
   color: #e5e7eb;
 }
 
+.btn.tertiary {
+  padding-inline: 1.1rem;
+  background: transparent;
+  border-color: rgba(148, 163, 184, 0.4);
+  color: #cbd5f5;
+  font-size: 0.86rem;
+}
+
+.btn.tertiary:hover {
+  background: rgba(15, 23, 42, 0.8);
+}
+
 .btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 22px 45px rgba(15, 23, 42, 0.9);
@@ -286,6 +298,11 @@ a:hover {
 .stats-hint {
   color: var(--muted);
   font-size: 0.95rem;
+}
+
+.stats-share-link {
+  display: inline-flex;
+  margin-top: 0.5rem;
 }
 
 .stats-error {
