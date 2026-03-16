@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>我的个人主页</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-content">
+      <div class="logo">
+        <span class="logo-mark">ME</span>
+        <span class="logo-text">我的主页</span>
+      </div>
+      <nav class="nav">
+        <a href="#about">关于我</a>
+        <a href="#skills">技能</a>
+        <a href="#projects">项目</a>
+        <a href="#contact">联系我</a>
+      </nav>
+      <button class="nav-toggle" id="navToggle">☰</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero 区 -->
+    <section class="hero" id="top">
+      <div class="container hero-content">
+        <div class="hero-text">
+          <h1>你好，我是 <span class="highlight">你的名字</span></h1>
+          <p class="hero-subtitle">
+            一句话介绍自己，比如：前端开发者 / 学生 / AI 爱好者。
+          </p>
+          <div class="hero-actions">
+            <a href="#projects" class="btn primary">查看我的项目</a>
+            <a href="#contact" class="btn secondary">联系我</a>
+          </div>
+        </div>
+        <div class="hero-avatar">
+          <!-- 可以替换成你的照片 -->
+          <div class="avatar-placeholder">你的头像</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 关于我 -->
+    <section class="section" id="about">
+      <div class="container">
+        <h2 class="section-title">关于我</h2>
+        <p>
+          在这里用 3~5 句话介绍你：目前在做什么、对什么感兴趣、擅长什么、未来目标。
+        </p>
+      </div>
+    </section>
+
+    <!-- 技能 -->
+    <section class="section section-alt" id="skills">
+      <div class="container">
+        <h2 class="section-title">技能</h2>
+        <div class="skills-grid">
+          <div class="card">
+            <h3>编程 / 技术</h3>
+            <ul>
+              <li>HTML / CSS / JavaScript</li>
+              <li>React / Vue（按实际修改）</li>
+              <li>Python / Node.js（按实际修改）</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>工具</h3>
+            <ul>
+              <li>Git / GitHub</li>
+              <li>VS Code / Cursor</li>
+              <li>常用设计工具（Figma 等）</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>软技能</h3>
+            <ul>
+              <li>沟通与协作</li>
+              <li>自学能力</li>
+              <li>解决问题的能力</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 项目 -->
+    <section class="section" id="projects">
+      <div class="container">
+        <h2 class="section-title">项目</h2>
+        <div class="projects-grid">
+          <article class="card project-card">
+            <h3>项目名称一</h3>
+            <p>简短介绍：这个项目做了什么，用了什么技术，有什么亮点。</p>
+            <div class="project-meta">
+              <span>技术栈：HTML / CSS / JS</span>
+            </div>
+          </article>
+
+          <article class="card project-card">
+            <h3>项目名称二</h3>
+            <p>简短介绍：比如个人博客、小工具、课程作业等。</p>
+            <div class="project-meta">
+              <span>技术栈：React / Node.js</span>
+            </div>
+          </article>
+
+          <article class="card project-card">
+            <h3>项目名称三</h3>
+            <p>可以是正在做的项目或计划中的项目。</p>
+            <div class="project-meta">
+              <span>技术栈：按实际填写</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 联系方式 -->
+    <section class="section section-alt" id="contact">
+      <div class="container">
+        <h2 class="section-title">联系我</h2>
+        <p>欢迎通过下面的方式联系我：</p>
+        <ul class="contact-list">
+          <li>邮箱：<a href="mailto:your-email@example.com">your-email@example.com</a></li>
+          <li>GitHub：<a href="https://github.com/yourname" target="_blank">github.com/yourname</a></li>
+          <li>微信 / 其他：可以在这里简单说明</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-content">
+      <span>© <span id="year"></span> 你的名字. 保留所有权利。</span>
+      <a href="#top" class="back-to-top">回到顶部 ↑</a>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
