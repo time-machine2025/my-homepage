@@ -199,24 +199,25 @@ a:hover {
   justify-content: center;
 }
 
-.avatar-placeholder {
+.avatar-frame {
   width: 220px;
   height: 220px;
   border-radius: 32px;
+  padding: 4px;
   background:
     radial-gradient(circle at 20% 0%, rgba(148, 163, 184, 0.8), transparent),
     radial-gradient(circle at 80% 110%, rgba(56, 189, 248, 0.9), transparent),
     radial-gradient(circle at -10% 80%, rgba(168, 85, 247, 0.85), transparent);
   border: 1px solid rgba(148, 163, 184, 0.5);
   box-shadow: var(--shadow-soft);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #e5e7eb;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  font-size: 0.82rem;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 26px;
+  object-fit: cover;
+  display: block;
 }
 
 .section {
