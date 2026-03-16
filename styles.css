@@ -200,8 +200,8 @@ a:hover {
 }
 
 .avatar-frame {
-  width: 220px;
-  height: 220px;
+  width: 176px;
+  height: 176px;
   border-radius: 32px;
   padding: 4px;
   background:
@@ -348,6 +348,11 @@ a:hover {
   .hero-avatar {
     order: -1;
     margin-bottom: 1.2rem;
+  }
+
+  .avatar-frame {
+    width: 140px;
+    height: 140px;
   }
 
   .section {
